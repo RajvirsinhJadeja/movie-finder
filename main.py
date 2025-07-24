@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 
-genreSet = {
+GENRES = {
     "action",
     "adventure",
     "animation",
@@ -26,99 +26,59 @@ genreSet = {
     "western",
 }
 
-base_url = "https://www.imdb.com/search/title/?title_type=feature"
+BASE_URL = "https://www.imdb.com/search/title/?title_type=feature"
+HEADERS = {"User-Agent": "Chrome (Windows 10.0; Win64; x64)"}
 
 
-def gather_info(url):
-    print("🎬 Welcome to Movie Finder!")
-    print(
-        "\nI'm excited to help you discover some great movies to watch based on your preferences."
-    )
+def get_genre() -> str:
     genre = input(
-        "\nWhat genre are you in the mood for? (e.g. action, sci-fi, horror): "
-    )
+        "\nWhat genre are you in the mood for? (e.g. action, sci-fi, horror)\n"
+        "If genre doesn't matter to you, simply press Enter to skip: "
+    ).lower()
 
-    if genre.lower() in ["scifi", "sci fi", "sci-fi"]:
-        url += "&genres=" + "sci-fi"
-    elif genre.lower() in genreSet:
-        url += "&genres=" + genre.lower()
+    if genre in ["scifi", "sci fi", "sci-fi"]:
+        return "sci-fi"
+    elif genre in GENRES:
+        return genre
 
-    while True:
-        score_input = input("\nEnter the minimum IMDb rating you're okay with (0-10): ")
-
-        try:
-            score = float(score_input)
-            if 0 <= score <= 10:
-                break
-            else:
-                print("⚠️ Please enter a number between 0 and 10.")
-        except ValueError:
-            print("⚠️ Invalid input. Please enter a number, not letters or symbols.")
-
-    url += "&user_rating=" + score_input + ","
-
-    print(
-        "\nIf you don't want to set a minimum or maximum release year, just press Enter to skip it."
-    )
-
-    min_date_input = input("\nEnter the earliest release year: ")
-    if not min_date_input:
-        min_date = ""
-    else:
-        while True:
-            try:
-                min_date = int(min_date_input)
-                if min_date < 1700:
-                    min_date = 1700
-                    break
-                elif min_date > 1700 and min_date <= 2025:
-                    break
-                else:
-                    min_date = 2025
-                    break
-            except ValueError:
-                print("⚠️ Invalid input. Please enter a number, not letters or symbols.")
-
-            min_date_input = input("\nRe-enter the earliest release year: ")
-
-    max_date_input = input("Enter the latest release year: ")
-    if not max_date_input:
-        max_date = ""
-    else:
-        while True:
-            try:
-                max_date = int(max_date_input)
-                if max_date >= 2025:
-                    max_date = 2075
-                    break
-                elif min_date != "" and max_date < min_date:
-                    print(
-                        "\nLatest release year must me more than earliest release year"
-                    )
-                else:
-                    break
-            except ValueError:
-                print("⚠️ Invalid input. Please enter a number, not letters or symbols.")
-
-            max_date_input = input("\nRe-enter the latest release year: ")
-
-    url += "&release_date=" + str(min_date) + "," + str(max_date)
-
-    return url
+    return ""
 
 
-url = gather_info(base_url)
+def gather_user_preferences(base_url: str) -> str:
+    print("🎬 Welcome to Movie Finder!")
+    print("\nI'm excited to help you discover great movies based on your preferences.")
 
-headers = {"User-Agent": "Chrome (Windows 10.0; Win64; x64)"}
+    genre = get_genre()
+    if genre != "":
+        base_url += f"&genres={genre}"
 
-
-page = requests.get(url, headers=headers)
-soup = BeautifulSoup(page.text, "html.parser")
-
-name_cells = soup.find_all("h3", class_="ipc-title__text ipc-title__text--reduced")
-
-name_cells.pop(len(name_cells) - 1)
+    return base_url
 
 
-for cell in name_cells:
-    print(cell.text.strip())
+def fetch_movie_titles(final_url: str) -> list:
+    page = requests.get(final_url, HEADERS)
+    soup = BeautifulSoup(page.text, "html.parser")
+
+    name_list = soup.find_all("h3", class_="ipc-title__text ipc-title__text--reduced")
+
+    name_list.pop(len(name_list) - 1)
+
+    return name_list
+
+
+def main():
+    final_url = gather_user_preferences(BASE_URL)
+    print("\n📡 Fetching results...\n")
+    movie_titles = fetch_movie_titles(final_url)
+
+    if not movie_titles:
+        print("❌ No movies found. Try adjusting your filters.")
+        return
+
+    print("🎥 Here are some movies you might enjoy:\n")
+    for title in movie_titles:
+        print(title.text.strip())
+
+
+if __name__ == "__main__":
+    main()
