@@ -56,6 +56,39 @@ def get_min_rating() -> float:
             print("\n⚠️ Invalid input. Please enter a number, not letters or symbols.")
 
 
+def get_year(
+    prompt: str, min_year: int = None, max_year: int = None, allow_empty: bool = True  # type: ignore
+) -> int | str:
+    while True:
+        value = input(prompt)
+        if not value and allow_empty:
+            return ""
+        try:
+            year = int(value)
+            if min_year is not None and year < min_year:
+                return min_year
+            if max_year is not None and year > max_year:
+                return max_year
+            return year
+        except ValueError:
+            print("⚠️ Invalid input. Please enter a number, not letters or symbols.")
+
+
+def gather_minmax_dates() -> tuple:
+    min_date = get_year(
+        "\nEnter the earliest release year: ", min_year=1700, max_year=2025
+    )
+
+    while True:
+        max_date = get_year("Enter the latest release year: ", max_year=2075)
+        if min_date != "" and max_date != "" and min_date > max_date:  # type: ignore
+            print("\nLatest release year must be more than earliest release year.")
+        else:
+            break
+
+    return min_date, max_date
+
+
 def gather_user_preferences(base_url: str) -> str:
     print("\n🎬 Welcome to Movie Finder!")
     print("\nI'm excited to help you discover great movies based on your preferences.")
@@ -66,6 +99,9 @@ def gather_user_preferences(base_url: str) -> str:
 
     min_rating = get_min_rating()
     base_url += f"&user_rating={min_rating},"
+
+    min_date, max_date = gather_minmax_dates()
+    base_url += f"&release_date={min_date},{max_date}"
 
     return base_url
 
