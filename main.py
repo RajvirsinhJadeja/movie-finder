@@ -44,19 +44,34 @@ def get_genre() -> str:
     return ""
 
 
+def get_min_rating() -> float:
+    while True:
+        min_rating = input("\nEnter the minimum IMDb rating you're okay with (0-10): ")
+        try:
+            rating = float(min_rating)
+
+            if rating >= 0 and rating <= 10:
+                return rating
+        except ValueError:
+            print("\n⚠️ Invalid input. Please enter a number, not letters or symbols.")
+
+
 def gather_user_preferences(base_url: str) -> str:
-    print("🎬 Welcome to Movie Finder!")
+    print("\n🎬 Welcome to Movie Finder!")
     print("\nI'm excited to help you discover great movies based on your preferences.")
 
     genre = get_genre()
     if genre != "":
         base_url += f"&genres={genre}"
 
+    min_rating = get_min_rating()
+    base_url += f"&user_rating={min_rating},"
+
     return base_url
 
 
 def fetch_movie_titles(final_url: str) -> list:
-    page = requests.get(final_url, HEADERS)
+    page = requests.get(final_url, headers=HEADERS)
     soup = BeautifulSoup(page.text, "html.parser")
 
     name_list = soup.find_all("h3", class_="ipc-title__text ipc-title__text--reduced")
