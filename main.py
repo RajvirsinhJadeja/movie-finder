@@ -46,7 +46,11 @@ def get_genre() -> str:
 
 def get_min_rating() -> float:
     while True:
-        min_rating = input("\nEnter the minimum IMDb rating you're okay with (0-10): ")
+        min_rating = (
+            input("\nEnter the minimum IMDb rating you're okay with (0-10): ")
+            .strip()
+            .replace(" ", "")
+        )
         try:
             rating = float(min_rating)
 
@@ -56,37 +60,65 @@ def get_min_rating() -> float:
             print("\n⚠️ Invalid input. Please enter a number, not letters or symbols.")
 
 
-def get_year(
-    prompt: str, min_year: int = None, max_year: int = None, allow_empty: bool = True  # type: ignore
+def get_int(
+    prompt: str,
+    min_value: int = None,  # type: ignore
+    max_value: int = None,  # type: ignore
 ) -> int | str:
     while True:
         value = input(prompt)
-        if not value and allow_empty:
+        if not value:
             return ""
         try:
-            year = int(value)
-            if min_year is not None and year < min_year:
-                return min_year
-            if max_year is not None and year > max_year:
-                return max_year
-            return year
+            num = int(value)
+            if min_value is not None and num < min_value:
+                return min_value
+            if max_value is not None and num > max_value:
+                return max_value
+            return num
         except ValueError:
             print("⚠️ Invalid input. Please enter a number, not letters or symbols.")
 
 
 def gather_minmax_dates() -> tuple:
-    min_date = get_year(
-        "\nEnter the earliest release year: ", min_year=1700, max_year=2025
+    min_date = get_int(
+        "\nEnter the earliest release year (Leave blank for no limit): ",
+        min_value=1700,
+        max_value=2025,
     )
 
     while True:
-        max_date = get_year("Enter the latest release year: ", max_year=2075)
+        max_date = get_int(
+            "Enter the latest release year (Leave blank for no limit): ", max_value=2075
+        )
         if min_date != "" and max_date != "" and min_date > max_date:  # type: ignore
             print("\nLatest release year must be more than earliest release year.")
         else:
             break
 
     return min_date, max_date
+
+
+def gather_minmax_reviews() -> tuple:
+    min_review_count = get_int(
+        "\nEnter the minimum number of reviews (0-5M) (Leave blank for no limit): ",
+        min_value=0,
+        max_value=1000000,
+    )
+
+    while True:
+        max_review_count = get_int(
+            "\nEnter the maximum number of reviews (0-5M) (Leave blank for no limit): ",
+            max_value=4000000,
+        )
+        if min_review_count != "" and max_review_count != "" and min_review_count > max_review_count:  # type: ignore
+            print(
+                "Maximum review count must be more than the minimum number of reviews."
+            )
+        else:
+            break
+
+    return min_review_count, max_review_count
 
 
 def gather_user_preferences(base_url: str) -> str:
@@ -102,6 +134,9 @@ def gather_user_preferences(base_url: str) -> str:
 
     min_date, max_date = gather_minmax_dates()
     base_url += f"&release_date={min_date},{max_date}"
+
+    min_reviews, max_reviews = gather_minmax_reviews()
+    base_url += f"&num_votes={min_reviews},{max_reviews}"
 
     return base_url
 
