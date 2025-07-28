@@ -31,6 +31,12 @@ HEADERS = {"User-Agent": "Chrome (Windows 10.0; Win64; x64)"}
 
 
 def get_genre() -> str:
+    """Function finds genre through user input
+
+    Returns:
+        str: returns genre
+    """
+
     genre = input(
         "\nWhat genre are you in the mood for? (e.g. action, sci-fi, horror)\n"
         "If genre doesn't matter to you, simply press Enter to skip: "
@@ -45,6 +51,12 @@ def get_genre() -> str:
 
 
 def get_min_rating() -> float:
+    """Prompt the user for the minimum IMDb rating they are willing to accept.
+
+    Returns:
+        float: A float value representing the minimum rating (0-10).
+    """
+
     while True:
         min_rating = (
             input("\nEnter the minimum IMDb rating you're okay with (0-10): ")
@@ -65,6 +77,17 @@ def get_int(
     min_value: int = None,  # type: ignore
     max_value: int = None,  # type: ignore
 ) -> int | str:
+    """Prompt the user for an integer input with optional minimum and maximum limits.
+
+    Args:
+        prompt (str): The message to display to the user.
+        min_value (int, optional): Minimum allowed value. Defaults to None.
+        max_value (int, optional): Maximum allowed value. Defaults to None.
+
+    Returns:
+        int | str: The integer entered by the user, or an empty string if input is blank.
+    """
+
     while True:
         value = input(prompt)
         if not value:
@@ -81,6 +104,12 @@ def get_int(
 
 
 def gather_minmax_dates() -> tuple:
+    """Prompt the user for the earliest and latest release years for movies.
+
+    Returns:
+        tuple: A tuple containing the minimum and maximum release years (int or empty string).
+    """
+
     min_date = get_int(
         "\nEnter the earliest release year (Leave blank for no limit): ",
         min_value=1700,
@@ -100,6 +129,12 @@ def gather_minmax_dates() -> tuple:
 
 
 def gather_minmax_reviews() -> tuple:
+    """Prompt the user for the minimum and maximum number of reviews a movie must have.
+
+    Returns:
+        tuple: A tuple containing the minimum and maximum review counts (int or empty string).
+    """
+
     min_review_count = get_int(
         "\nEnter the minimum number of reviews (0-5M) (Leave blank for no limit): ",
         min_value=0,
@@ -122,6 +157,15 @@ def gather_minmax_reviews() -> tuple:
 
 
 def gather_user_preferences(base_url: str) -> str:
+    """Collect all user preferences and build the final IMDb search URL.
+
+    Args:
+        base_url (str): The starting IMDb search URL.
+
+    Returns:
+        str: The fully constructed search URL with all filters applied.
+    """
+
     print("\n🎬 Welcome to Movie Finder!")
     print("\nI'm excited to help you discover great movies based on your preferences.")
 
@@ -142,6 +186,15 @@ def gather_user_preferences(base_url: str) -> str:
 
 
 def fetch_movie_titles(final_url: str) -> list:
+    """Fetch and parse movie titles from the IMDb search results page.
+
+    Args:
+        final_url (str): The complete IMDb search URL with filters.
+
+    Returns:
+        list: A list of BeautifulSoup elements containing movie titles.
+    """
+
     page = requests.get(final_url, headers=HEADERS)
     soup = BeautifulSoup(page.text, "html.parser")
 
@@ -153,6 +206,10 @@ def fetch_movie_titles(final_url: str) -> list:
 
 
 def main():
+    """Main entry point of the Movie Finder program.
+    Collects user preferences, fetches results from IMDb, and displays movie titles.
+    """
+
     final_url = gather_user_preferences(BASE_URL)
     print("\n📡 Fetching results...\n")
     movie_titles = fetch_movie_titles(final_url)
