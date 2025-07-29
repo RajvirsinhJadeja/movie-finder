@@ -1,6 +1,6 @@
 # **Movie Finder**  
 
-A Python script that scrapes IMDb to find the top 10 best movies based on your preferences (genre, rating, release year, and review count).  
+A Python script that scrapes IMDb to find the top movies based on your preferences (genre, rating, release year, and review count).  
 
 ## **Description**  
 Movie Finder is a command-line tool that helps you discover great movies by pulling data directly from IMDb. You can filter movies based on:  
@@ -42,6 +42,8 @@ You will be prompted for:
 - Release year range
 - Review count range
 
+![reveal gif](https://github.com/RajvirsinhJadeja/movie-finder/blob/dev/assets/movie_finder_demo.gif)
+
 ### **Example**
 
 ```yaml
@@ -65,6 +67,5 @@ Here are some movies you might enjoy:
 5. How to Train Your Dragon
 ...
 ```
-
 ## **License**
-Distributed under the MIT license. See LICENSE for more information.
+Distributed under the MIT license. See `LICENSE` for more information.
