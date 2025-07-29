@@ -166,7 +166,7 @@ def gather_user_preferences(base_url: str) -> str:
         str: The fully constructed search URL with all filters applied.
     """
 
-    print("\n🎬 Welcome to Movie Finder!")
+    print("\nWelcome to Movie Finder!")
     print("\nI'm excited to help you discover great movies based on your preferences.")
 
     genre = get_genre()
@@ -211,14 +211,14 @@ def main():
     """
 
     final_url = gather_user_preferences(BASE_URL)
-    print("\n📡 Fetching results...\n")
+    print("\nFetching results...\n")
     movie_titles = fetch_movie_titles(final_url)
 
     if not movie_titles:
-        print("❌ No movies found. Try adjusting your filters.")
+        print("No movies found. Try adjusting your filters.")
         return
 
-    print("🎥 Here are some movies you might enjoy:\n")
+    print("Here are some movies you might enjoy:\n")
     for title in movie_titles:
         print(title.text.strip())
 
