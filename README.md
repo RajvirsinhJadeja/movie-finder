@@ -42,6 +42,8 @@ You will be prompted for:
 - Release year range
 - Review count range
 
+![reveal gif](https://github.com/RajvirsinhJadeja/movie-finder/blob/dev/assets/movie_finder_demo.gif)
+
 ### **Example**
 
 ```yaml
@@ -65,6 +67,5 @@ Here are some movies you might enjoy:
 5. How to Train Your Dragon
 ...
 ```
-
 ## **License**
 Distributed under the MIT license. See LICENSE for more information.
