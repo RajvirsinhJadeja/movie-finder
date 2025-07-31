@@ -69,7 +69,7 @@ def get_min_rating() -> float:
             if rating >= 0 and rating <= 10:
                 return rating
         except ValueError:
-            print("\n⚠️ Invalid input. Please enter a number, not letters or symbols.")
+            print("\nInvalid input. Please enter a number, not letters or symbols.")
 
 
 def get_int(
@@ -100,7 +100,7 @@ def get_int(
                 return max_value
             return num
         except ValueError:
-            print("⚠️ Invalid input. Please enter a number, not letters or symbols.")
+            print("Invalid input. Please enter a number, not letters or symbols.")
 
 
 def gather_minmax_dates() -> tuple:
